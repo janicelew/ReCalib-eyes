@@ -137,6 +137,7 @@ class FundusDRDataset(Dataset):
         id_col: str,
         grade_col: str,
         preferred_ext: str = "",
+        max_samples: int | None = None,
     ) -> None:
         self.csv_path = Path(csv_path)
         self.image_dir = Path(image_dir)
@@ -173,6 +174,9 @@ class FundusDRDataset(Dataset):
                     "label": int(grade >= REFERABLE_GRADE_THRESHOLD),
                 }
             )
+
+        if max_samples is not None:
+            rows = rows[:max_samples]
 
         self.rows = rows
 

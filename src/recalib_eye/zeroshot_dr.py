@@ -95,6 +95,7 @@ def main() -> None:
             id_col=dataset_cfg["id_col"],
             grade_col=dataset_cfg["grade_col"],
             preferred_ext=dataset_cfg.get("preferred_ext", ""),
+            max_samples=dataset_cfg.get("max_samples"),
         )
         dataloader = DataLoader(
             dataset,

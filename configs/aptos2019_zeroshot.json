@@ -4,8 +4,7 @@
   "device": "auto",
   "batch_size": 8,
   "num_workers": 0,
-  "output_dir": "outputs/zeroshot_dr",
-  "target_specificity": 0.9,
+  "output_dir": "outputs/aptos2019_zeroshot",
   "datasets": [
     {
       "name": "APTOS2019",
@@ -15,24 +14,6 @@
       "id_col": "id_code",
       "grade_col": "diagnosis",
       "preferred_ext": ".png"
-    },
-    {
-      "name": "IDRiD",
-      "role": "target",
-      "csv_path": "data/idrid/labels.csv",
-      "image_dir": "data/idrid/images",
-      "id_col": "image_id",
-      "grade_col": "grade",
-      "preferred_ext": ".jpg"
-    },
-    {
-      "name": "MESSIDOR2",
-      "role": "target",
-      "csv_path": "data/messidor2/labels.csv",
-      "image_dir": "data/messidor2/images",
-      "id_col": "image_id",
-      "grade_col": "grade",
-      "preferred_ext": ".jpg"
     }
   ],
   "prompts_by_grade": {
