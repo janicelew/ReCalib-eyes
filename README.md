@@ -129,6 +129,69 @@ Expected dataset label mapping:
 Target datasets must only be used for final evaluation. Do not tune prompts,
 fusion weights, thresholds, or temperature on target datasets.
 
+### Source Calibration
+
+APTOS2019 is the current source dataset. Calibration settings are learned only
+from datasets marked with:
+
+```json
+"role": "source"
+```
+
+When `source_calibration.enabled` is true, the evaluation writes:
+
+```text
+source_calibration.json
+metrics_calibrated.csv
+predictions_<dataset>.csv
+```
+
+The same source threshold, temperature, and bias should then be applied to target
+datasets such as IDRiD or MESSIDOR2 without refitting on those target labels.
+
+To calibrate from an existing APTOS prediction CSV without rerunning EyeCLIP:
+
+```bash
+PYTHONPATH=src python scripts/calibrate_source_predictions.py \
+  --predictions results/aptos2019_zeroshot/predictions_APTOS2019.csv \
+  --source-name APTOS2019 \
+  --output-dir outputs/aptos2019_source_calibration
+```
+
+To test a direct binary referable/non-referable prompt setup:
+
+```bash
+PYTHONPATH=src python -m recalib_eye.zeroshot_dr --config configs/aptos2019_binary_zeroshot.json
+```
+
+If prompt-only scoring is weak, switch to source image prototypes:
+
+```bash
+PYTHONPATH=src python -m recalib_eye.image_prototype_dr --config configs/aptos2019_image_prototypes.json
+```
+
+For APTOS2019 source evaluation, this uses leave-one-out scoring so each image
+is not included in its own class prototype.
+
+On CPU, use the 256-image source subset first:
+
+```bash
+PYTHONPATH=src python -m recalib_eye.image_prototype_dr --config configs/aptos2019_image_prototypes_256.json
+```
+
+If image prototypes are still weak, test whether EyeCLIP image features are
+usable with a source-only linear probe:
+
+```bash
+PYTHONPATH=src python -m recalib_eye.linear_probe_dr --config configs/aptos2019_linear_probe_256.json
+```
+
+For the full APTOS2019 source run:
+
+```bash
+PYTHONPATH=src python -m recalib_eye.linear_probe_dr --config configs/aptos2019_linear_probe.json
+```
+
 ## Repository Structure
 
 ```text
@@ -141,7 +204,16 @@ outputs/        Local experiment outputs, ignored by Git
 
 ## Results
 
-To be updated after dataset evaluation.
+Current strongest APTOS2019 source result:
+
+- Method: EyeCLIP image features + source-only linear probe.
+- Protocol: 5-fold source out-of-fold evaluation on APTOS2019.
+- AUROC: `0.9360`.
+- AUPR: `0.9009`.
+- Calibrated balanced accuracy: `0.8672`.
+- Calibrated ECE: `0.0195`.
+
+Prompt-only zero-shot remains a weak baseline on APTOS2019.
 
 ## Citation
 

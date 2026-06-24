@@ -5,7 +5,14 @@
   "batch_size": 8,
   "num_workers": 0,
   "output_dir": "outputs/zeroshot_dr",
+  "score_mode": "grade_sum",
   "target_specificity": 0.9,
+  "source_calibration": {
+    "enabled": true,
+    "source_roles": ["source"],
+    "threshold_metric": "balanced_accuracy",
+    "fit_probability_calibrator": true
+  },
   "datasets": [
     {
       "name": "APTOS2019",

@@ -1,0 +1,27 @@
+{
+  "eyeclip_repo": "/Users/lewjanice/Documents/EyeCLIP",
+  "checkpoint": "/Users/lewjanice/Documents/EyeCLIP/eyeclip_visual.pt",
+  "device": "auto",
+  "batch_size": 4,
+  "num_workers": 0,
+  "output_dir": "outputs/aptos2019_image_prototypes_smoke",
+  "prototype_mode": "binary",
+  "source_roles": ["source-smoke"],
+  "target_specificity": 0.9,
+  "threshold_metric": "balanced_accuracy",
+  "fit_probability_calibrator": true,
+  "feature_cache": true,
+  "reuse_feature_cache": true,
+  "datasets": [
+    {
+      "name": "APTOS2019-image-prototype-smoke",
+      "role": "source-smoke",
+      "csv_path": "data/aptos2019/train.csv",
+      "image_dir": "data/aptos2019/train_images",
+      "id_col": "id_code",
+      "grade_col": "diagnosis",
+      "preferred_ext": ".png",
+      "max_samples": 32
+    }
+  ]
+}

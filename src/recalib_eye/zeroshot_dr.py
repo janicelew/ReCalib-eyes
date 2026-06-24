@@ -10,12 +10,15 @@ import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from .calibration import apply_probability_calibration, fit_source_calibration
 from .data import FundusDRDataset
 from .eyeclip_loader import load_eyeclip
 from .metrics import binary_classification_report
 from .prototypes import (
+    DR_REFERABLE_CLASS_NAMES,
     DR_GRADE_CLASS_NAMES,
     build_text_prototypes,
+    dr_referable_probs_from_binary_logits,
     dr_referable_probs_from_grade_logits,
     image_text_logits,
 )
@@ -32,8 +35,37 @@ def read_config(path: str | Path) -> dict:
         return json.load(handle)
 
 
+def write_json(path: str | Path, payload: dict) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+        handle.write("\n")
+
+
+def build_score_prototypes(config: dict, bundle):
+    score_mode = config.get("score_mode", "grade_sum")
+    if score_mode == "grade_sum":
+        prompts_by_grade = config["prompts_by_grade"]
+        ordered_prompts = {name: prompts_by_grade[name] for name in DR_GRADE_CLASS_NAMES}
+        return score_mode, build_text_prototypes(bundle.model, bundle.clip, ordered_prompts, bundle.device)
+    if score_mode == "binary_referable":
+        prompts_by_referable = config["prompts_by_referable"]
+        ordered_prompts = {name: prompts_by_referable[name] for name in DR_REFERABLE_CLASS_NAMES}
+        return score_mode, build_text_prototypes(bundle.model, bundle.clip, ordered_prompts, bundle.device)
+    raise ValueError(f"Unsupported score_mode: {score_mode!r}")
+
+
+def referable_probs_from_logits(score_mode: str, logits: torch.Tensor) -> torch.Tensor:
+    if score_mode == "grade_sum":
+        return dr_referable_probs_from_grade_logits(logits)
+    if score_mode == "binary_referable":
+        return dr_referable_probs_from_binary_logits(logits)
+    raise ValueError(f"Unsupported score_mode: {score_mode!r}")
+
+
 @torch.no_grad()
-def evaluate_dataset(name: str, dataset: FundusDRDataset, dataloader: DataLoader, bundle, grade_text_features):
+def evaluate_dataset(name: str, dataset: FundusDRDataset, dataloader: DataLoader, bundle, text_features, score_mode: str):
     all_probs: list[np.ndarray] = []
     all_labels: list[np.ndarray] = []
     rows = []
@@ -43,8 +75,8 @@ def evaluate_dataset(name: str, dataset: FundusDRDataset, dataloader: DataLoader
         images = images.to(bundle.device, non_blocking=True)
         labels_np = labels.numpy().astype(int)
         image_features = bundle.model.encode_image(images)
-        grade_logits = image_text_logits(image_features, grade_text_features)
-        probs = dr_referable_probs_from_grade_logits(grade_logits).detach().cpu().numpy()
+        logits = image_text_logits(image_features, text_features)
+        probs = referable_probs_from_logits(score_mode, logits).detach().cpu().numpy()
 
         all_probs.append(probs)
         all_labels.append(labels_np)
@@ -66,6 +98,77 @@ def evaluate_dataset(name: str, dataset: FundusDRDataset, dataloader: DataLoader
     return binary_classification_report(labels, probs), pd.DataFrame(rows)
 
 
+def maybe_apply_source_calibration(config: dict, output_dir: Path, predictions_by_dataset: dict[str, pd.DataFrame]) -> pd.DataFrame | None:
+    calibration_cfg = config.get("source_calibration", {})
+    if not calibration_cfg.get("enabled", False):
+        return None
+
+    source_roles = set(calibration_cfg.get("source_roles", ["source"]))
+    source_frames = []
+    source_names = []
+    for dataset_cfg in config["datasets"]:
+        role = dataset_cfg.get("role", "")
+        name = dataset_cfg["name"]
+        if role in source_roles:
+            source_frames.append(predictions_by_dataset[name])
+            source_names.append(name)
+
+    if not source_frames:
+        raise ValueError(f"No source datasets found for source_roles={sorted(source_roles)}")
+
+    source_predictions = pd.concat(source_frames, ignore_index=True)
+    calibration = fit_source_calibration(
+        source_predictions["label_referable"].to_numpy(),
+        source_predictions["prob_referable"].to_numpy(),
+        source_dataset="+".join(source_names),
+        threshold_metric=calibration_cfg.get("threshold_metric", "balanced_accuracy"),
+        fit_probability_calibrator=bool(calibration_cfg.get("fit_probability_calibrator", True)),
+    )
+
+    target_specificity = float(config.get("target_specificity", 0.90))
+    calibrated_metrics = []
+    for dataset_cfg in config["datasets"]:
+        name = dataset_cfg["name"]
+        predictions = predictions_by_dataset[name]
+        calibrated_probs = apply_probability_calibration(
+            predictions["prob_referable"].to_numpy(),
+            temperature=calibration.temperature,
+            bias=calibration.bias,
+        )
+        predictions["prob_referable_calibrated"] = calibrated_probs
+        predictions["pred_referable_calibrated"] = (calibrated_probs >= calibration.threshold).astype(int)
+        metrics = binary_classification_report(
+            predictions["label_referable"].to_numpy(),
+            calibrated_probs,
+            threshold=calibration.threshold,
+            target_specificity=target_specificity,
+        )
+        metrics["dataset"] = name
+        metrics["role"] = dataset_cfg.get("role", "")
+        metrics["threshold"] = calibration.threshold
+        metrics["temperature"] = calibration.temperature
+        metrics["bias"] = calibration.bias
+        calibrated_metrics.append(metrics)
+
+    calibration_path = calibration_cfg.get("output_path", "source_calibration.json")
+    if not Path(calibration_path).is_absolute():
+        calibration_path = output_dir / calibration_path
+    write_json(
+        calibration_path,
+        {
+            **calibration.to_dict(),
+            "score_mode": config.get("score_mode", "grade_sum"),
+            "source_roles": sorted(source_roles),
+        },
+    )
+
+    metrics_df = pd.DataFrame(calibrated_metrics)
+    metric_cols = ["dataset", "role", *[col for col in metrics_df.columns if col not in {"dataset", "role"}]]
+    metrics_df = metrics_df[metric_cols]
+    metrics_df.to_csv(output_dir / "metrics_calibrated.csv", index=False)
+    return metrics_df
+
+
 def main() -> None:
     args = parse_args()
     config_path = Path(args.config)
@@ -82,11 +185,10 @@ def main() -> None:
         device=config.get("device", "auto"),
     )
 
-    prompts_by_grade = config["prompts_by_grade"]
-    ordered_prompts = {name: prompts_by_grade[name] for name in DR_GRADE_CLASS_NAMES}
-    grade_text_features = build_text_prototypes(bundle.model, bundle.clip, ordered_prompts, bundle.device)
+    score_mode, text_features = build_score_prototypes(config, bundle)
 
     metrics_rows = []
+    predictions_by_dataset = {}
     for dataset_cfg in config["datasets"]:
         dataset = FundusDRDataset(
             csv_path=dataset_cfg["csv_path"],
@@ -110,19 +212,27 @@ def main() -> None:
             dataset,
             dataloader,
             bundle,
-            grade_text_features,
+            text_features,
+            score_mode,
         )
         metrics["dataset"] = dataset_cfg["name"]
         metrics["role"] = dataset_cfg.get("role", "")
         metrics_rows.append(metrics)
+        predictions_by_dataset[dataset_cfg["name"]] = predictions
 
-        predictions.to_csv(output_dir / f"predictions_{dataset_cfg['name']}.csv", index=False)
+    calibrated_metrics_df = maybe_apply_source_calibration(config, output_dir, predictions_by_dataset)
+
+    for dataset_name, predictions in predictions_by_dataset.items():
+        predictions.to_csv(output_dir / f"predictions_{dataset_name}.csv", index=False)
 
     metrics_df = pd.DataFrame(metrics_rows)
     metric_cols = ["dataset", "role", *[col for col in metrics_df.columns if col not in {"dataset", "role"}]]
     metrics_df = metrics_df[metric_cols]
     metrics_df.to_csv(output_dir / "metrics.csv", index=False)
     print(metrics_df.to_string(index=False))
+    if calibrated_metrics_df is not None:
+        print("\nSource-calibrated metrics:")
+        print(calibrated_metrics_df.to_string(index=False))
     print(f"Saved outputs to {output_dir}")
 
 

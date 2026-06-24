@@ -13,6 +13,7 @@ DR_GRADE_CLASS_NAMES = [
     "grade_3_severe",
     "grade_4_proliferative",
 ]
+DR_REFERABLE_CLASS_NAMES = ["non_referable", "referable"]
 NON_REFERABLE_GRADE_INDICES = [0, 1]
 REFERABLE_GRADE_INDICES = [2, 3, 4]
 
@@ -40,6 +41,11 @@ def build_text_prototypes(
 def dr_referable_probs_from_grade_logits(grade_logits: torch.Tensor) -> torch.Tensor:
     grade_probs = torch.softmax(grade_logits, dim=-1)
     return grade_probs[:, REFERABLE_GRADE_INDICES].sum(dim=-1)
+
+
+def dr_referable_probs_from_binary_logits(binary_logits: torch.Tensor) -> torch.Tensor:
+    binary_probs = torch.softmax(binary_logits, dim=-1)
+    return binary_probs[:, 1]
 
 
 def image_text_logits(image_features: torch.Tensor, text_features: torch.Tensor, logit_scale: float = 100.0) -> torch.Tensor:

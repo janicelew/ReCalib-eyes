@@ -1,0 +1,39 @@
+{
+  "eyeclip_repo": "/Users/lewjanice/Documents/EyeCLIP",
+  "checkpoint": "/Users/lewjanice/Documents/EyeCLIP/eyeclip_visual.pt",
+  "device": "auto",
+  "batch_size": 8,
+  "num_workers": 0,
+  "output_dir": "outputs/aptos2019_binary_zeroshot",
+  "score_mode": "binary_referable",
+  "target_specificity": 0.9,
+  "source_calibration": {
+    "enabled": true,
+    "source_roles": ["source"],
+    "threshold_metric": "balanced_accuracy",
+    "fit_probability_calibrator": true
+  },
+  "datasets": [
+    {
+      "name": "APTOS2019",
+      "role": "source",
+      "csv_path": "data/aptos2019/train.csv",
+      "image_dir": "data/aptos2019/train_images",
+      "id_col": "id_code",
+      "grade_col": "diagnosis",
+      "preferred_ext": ".png"
+    }
+  ],
+  "prompts_by_referable": {
+    "non_referable": [
+      "normal retina",
+      "fundus photograph with no diabetic retinopathy",
+      "fundus photograph with mild non-referable diabetic retinopathy"
+    ],
+    "referable": [
+      "fundus photograph with referable diabetic retinopathy",
+      "fundus photograph with moderate diabetic retinopathy",
+      "fundus photograph with severe or proliferative diabetic retinopathy"
+    ]
+  }
+}
