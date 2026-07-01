@@ -217,4 +217,17 @@ Prompt-only zero-shot remains a weak baseline on APTOS2019.
 
 ## Citation
 
-To be added.
+This project builds on EyeCLIP. If you use EyeCLIP in your research, please cite:
+
+```bibtex
+@article{shi2025multimodal,
+  title={A multimodal visual--language foundation model for computational ophthalmology},
+  author={Shi, Danli and Zhang, Weiyi and Yang, Jiancheng and Huang, Siyu and Chen, Xiaolan and Xu, Pusheng and Jin, Kai and Lin, Shan and Wei, Jin and Yusufu, Mayinuer and others},
+  journal={npj Digital Medicine},
+  volume={8},
+  number={1},
+  pages={381},
+  year={2025},
+  publisher={Nature Publishing Group UK London}
+}
+```
