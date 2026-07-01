@@ -1,0 +1,14 @@
+torch
+torchvision
+numpy<2
+pandas
+matplotlib
+scikit-learn
+jupyter
+tqdm
+opencv-python
+Pillow
+timm
+ftfy
+regex
+gdown

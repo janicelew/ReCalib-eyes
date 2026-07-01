@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.pyc
+.ipynb_checkpoints/
+data/
+outputs/
+models/
+external/
+*.pt
+*.pth
+*.ckpt
+.DS_Store
+.env
+
+# Local-only docs (not for GitHub)
+CURSOR_HANDOFF.md
