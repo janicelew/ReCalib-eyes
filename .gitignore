@@ -10,3 +10,7 @@ external/
 *.ckpt
 .DS_Store
 .env
+
+# Local-only docs (not for GitHub)
+README.md
+CURSOR_HANDOFF.md
