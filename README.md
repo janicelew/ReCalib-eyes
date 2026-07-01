@@ -217,17 +217,42 @@ Prompt-only zero-shot remains a weak baseline on APTOS2019.
 
 ## Citation
 
-This project builds on EyeCLIP. If you use EyeCLIP in your research, please cite:
+### ReCalib-Eye
+
+If you use this repository, the source-calibrated prototype adaptation pipeline, or the
+cross-dataset calibration evaluation protocol, please cite:
 
 ```bibtex
-@article{shi2025multimodal,
-  title={A multimodal visual--language foundation model for computational ophthalmology},
-  author={Shi, Danli and Zhang, Weiyi and Yang, Jiancheng and Huang, Siyu and Chen, Xiaolan and Xu, Pusheng and Jin, Kai and Lin, Shan and Wei, Jin and Yusufu, Mayinuer and others},
-  journal={npj Digital Medicine},
-  volume={8},
-  number={1},
-  pages={381},
-  year={2025},
-  publisher={Nature Publishing Group UK London}
+@software{lew2025recalibeye,
+  title   = {{ReCalib-Eye}: Source-Calibrated Prototype Adaptation of Ophthalmic
+             Visual-Language Foundation Models under Cross-Dataset Shift},
+  author  = {Lew, Janice},
+  year    = {2025},
+  url     = {https://github.com/janicelew/ReCalib-eyes},
+  note    = {Research software for adapting released EyeCLIP checkpoints with
+             clinical text prototypes, image prototypes, and source-only calibration}
 }
 ```
+
+### EyeCLIP (foundation model)
+
+ReCalib-Eye builds on the official EyeCLIP release and uses `eyeclip_visual.pt` as a
+frozen encoder. It does not reproduce EyeCLIP pretraining. If you use EyeCLIP weights or
+compare against EyeCLIP baselines, please also cite the original paper:
+
+```bibtex
+@article{shi2025eyeclip,
+  title   = {A multimodal visual--language foundation model for computational ophthalmology},
+  author  = {Shi, Danli and Zhang, Weiyi and Yang, Jiancheng and Huang, Siyu and
+             Chen, Xiaolan and Xu, Pusheng and Jin, Kai and Lin, Shan and Wei, Jin and
+             Yusufu, Mayinuer and others},
+  journal = {npj Digital Medicine},
+  volume  = {8},
+  pages   = {381},
+  year    = {2025},
+  doi     = {10.1038/s41746-025-01772-2},
+  url     = {https://doi.org/10.1038/s41746-025-01772-2}
+}
+```
+
+Official EyeCLIP code and weights: [github.com/Michi-3000/EyeCLIP](https://github.com/Michi-3000/EyeCLIP)
