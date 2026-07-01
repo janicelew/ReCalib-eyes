@@ -8,6 +8,7 @@ from typing import Any
 
 import torch
 
+
 DEFAULT_EYECLIP_REPO = Path("/Users/lewjanice/Documents/EyeCLIP")
 DEFAULT_CHECKPOINT = DEFAULT_EYECLIP_REPO / "eyeclip_visual.pt"
 

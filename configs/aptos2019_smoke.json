@@ -1,0 +1,47 @@
+{
+  "eyeclip_repo": "/Users/lewjanice/Documents/EyeCLIP",
+  "checkpoint": "/Users/lewjanice/Documents/EyeCLIP/eyeclip_visual.pt",
+  "device": "auto",
+  "batch_size": 2,
+  "num_workers": 0,
+  "output_dir": "outputs/aptos2019_smoke",
+  "datasets": [
+    {
+      "name": "APTOS2019-smoke",
+      "role": "source-smoke",
+      "csv_path": "data/aptos2019/train.csv",
+      "image_dir": "data/aptos2019/train_images",
+      "id_col": "id_code",
+      "grade_col": "diagnosis",
+      "preferred_ext": ".png",
+      "max_samples": 8
+    }
+  ],
+  "prompts_by_grade": {
+    "grade_0_normal": [
+      "normal",
+      "color fundus, normal retina",
+      "fundus photography, no diabetic retinopathy"
+    ],
+    "grade_1_mild": [
+      "mild diabetic retinopathy",
+      "color fundus, mild diabetic retinopathy",
+      "fundus photography, mild nonproliferative diabetic retinopathy"
+    ],
+    "grade_2_moderate": [
+      "moderate diabetic retinopathy",
+      "color fundus, moderate diabetic retinopathy",
+      "fundus photography, moderate nonproliferative diabetic retinopathy"
+    ],
+    "grade_3_severe": [
+      "severe diabetic retinopathy",
+      "color fundus, severe diabetic retinopathy",
+      "fundus photography, severe nonproliferative diabetic retinopathy"
+    ],
+    "grade_4_proliferative": [
+      "proliferative diabetic retinopathy",
+      "color fundus, proliferative diabetic retinopathy",
+      "fundus photography, proliferative diabetic retinopathy"
+    ]
+  }
+}

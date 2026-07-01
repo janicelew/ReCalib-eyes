@@ -5,6 +5,7 @@ from collections.abc import Mapping, Sequence
 import torch
 import torch.nn.functional as F
 
+
 DR_GRADE_CLASS_NAMES = [
     "grade_0_normal",
     "grade_1_mild",

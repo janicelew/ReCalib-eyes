@@ -15,8 +15,8 @@ from .data import FundusDRDataset
 from .eyeclip_loader import load_eyeclip
 from .metrics import binary_classification_report
 from .prototypes import (
-    DR_GRADE_CLASS_NAMES,
     DR_REFERABLE_CLASS_NAMES,
+    DR_GRADE_CLASS_NAMES,
     build_text_prototypes,
     dr_referable_probs_from_binary_logits,
     dr_referable_probs_from_grade_logits,

@@ -7,6 +7,7 @@ import pandas as pd
 from PIL import Image
 from torch.utils.data import Dataset
 
+
 IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp")
 REFERABLE_GRADE_THRESHOLD = 2
 
