@@ -217,28 +217,9 @@ Prompt-only zero-shot remains a weak baseline on APTOS2019.
 
 ## Citation
 
-### ReCalib-Eye
-
-If you use this repository, the source-calibrated prototype adaptation pipeline, or the
-cross-dataset calibration evaluation protocol, please cite:
-
-```bibtex
-@software{lew2025recalibeye,
-  title   = {{ReCalib-Eye}: Source-Calibrated Prototype Adaptation of Ophthalmic
-             Visual-Language Foundation Models under Cross-Dataset Shift},
-  author  = {Lew, Janice},
-  year    = {2025},
-  url     = {https://github.com/janicelew/ReCalib-eyes},
-  note    = {Research software for adapting released EyeCLIP checkpoints with
-             clinical text prototypes, image prototypes, and source-only calibration}
-}
-```
-
-### EyeCLIP (foundation model)
-
 ReCalib-Eye builds on the official EyeCLIP release and uses `eyeclip_visual.pt` as a
 frozen encoder. It does not reproduce EyeCLIP pretraining. If you use EyeCLIP weights or
-compare against EyeCLIP baselines, please also cite the original paper:
+compare against EyeCLIP baselines, please cite the original paper:
 
 ```bibtex
 @article{shi2025eyeclip,
