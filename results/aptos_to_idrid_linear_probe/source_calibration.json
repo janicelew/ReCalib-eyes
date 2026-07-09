@@ -1,0 +1,18 @@
+{
+  "source_dataset": "APTOS2019",
+  "n_source": 3662,
+  "positive_rate": 0.4060622610595303,
+  "temperature": 1.1204854008908787,
+  "bias": -0.2999999999999998,
+  "threshold": 0.4554110192619407,
+  "threshold_metric": "balanced_accuracy",
+  "source_metric_value": 0.866811214433133,
+  "nll_before": 0.32270898756037053,
+  "nll_after": 0.3163923279869855,
+  "source_roles": [
+    "source"
+  ],
+  "cv_folds": 5,
+  "class_weight": "balanced",
+  "C": 1.0
+}

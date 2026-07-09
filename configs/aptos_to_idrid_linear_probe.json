@@ -1,6 +1,6 @@
 {
-  "eyeclip_repo": "/Users/lewjanice/Documents/EyeCLIP",
-  "checkpoint": "/Users/lewjanice/Documents/EyeCLIP/eyeclip_visual.pt",
+  "eyeclip_repo": "D:/Projects/EyeCLIP",
+  "checkpoint": "D:/Projects/EyeCLIP/eyeclip_visual.pt",
   "device": "auto",
   "batch_size": 8,
   "num_workers": 0,
