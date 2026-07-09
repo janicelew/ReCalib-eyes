@@ -58,7 +58,7 @@ Planned datasets:
 
 - APTOS2019
 - IDRiD
-- MESSIDOR2
+- MESSIDOR2 (zero-shot baseline done, see `results/messidor2_zeroshot/`)
 - PAPILA
 - Glaucoma Fundus
 
@@ -214,6 +214,13 @@ Current strongest APTOS2019 source result:
 - Calibrated ECE: `0.0195`.
 
 Prompt-only zero-shot remains a weak baseline on APTOS2019.
+
+MESSIDOR2 zero-shot baseline (prompt-only, no calibration):
+
+- Method: EyeCLIP zero-shot, prompts `"normal retina"` / `"diabetic retinopathy"`.
+- any-DR AUROC: `0.6538`, AUPR: `0.5519`, F1: `0.5884`, accuracy: `0.4169`.
+- Referable-DR AUROC: `0.6149`, AUPR: `0.3392`.
+- Details: `results/messidor2_zeroshot/`.
 
 ## Citation
 

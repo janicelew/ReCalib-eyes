@@ -1,0 +1,7 @@
+=== MESSIDOR2 Zero-Shot Baseline Metrics (Binary) ===
+any_dr_auroc: 0.6538
+any_dr_aupr: 0.5519
+any_dr_f1: 0.5884
+any_dr_accuracy: 0.4169
+rdr_auroc: 0.6149
+rdr_aupr: 0.3392
