@@ -1,0 +1,11 @@
+batch_size: 32
+clip_model_type: ViT-B/32
+csv_path: /kaggle/input/datasets/nadaol0/messidor2/messidor_2.csv
+dataset_name: MESSIDOR2
+eyeclip_weights: /kaggle/input/datasets/selen917/eyeclip/eyeclip (1).pt
+image_dir: /kaggle/input/datasets/nadaol0/messidor2/images
+num_workers: 4
+cv_folds: 5
+random_seed: 42
+C: 1.0
+class_weight: balanced

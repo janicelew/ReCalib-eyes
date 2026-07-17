@@ -1,0 +1,9 @@
+metric,value
+any_dr_auroc,0.7235
+any_dr_aupr,0.6315
+any_dr_f1,0.6273
+any_dr_accuracy,0.6669
+rdr_auroc,0.7388
+rdr_aupr,0.5140
+rdr_f1,0.5193
+rdr_accuracy,0.6858

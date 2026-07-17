@@ -222,6 +222,13 @@ MESSIDOR2 zero-shot baseline (prompt-only, no calibration):
 - Referable-DR AUROC: `0.6149`, AUPR: `0.3392`.
 - Details: `results/messidor2_zeroshot/`.
 
+MESSIDOR2 source-only linear probe baseline (no cross-dataset calibration):
+
+- Method: EyeCLIP image features + source-only linear probe, 5-fold OOF on MESSIDOR2.
+- any-DR AUROC: `0.7235`, AUPR: `0.6315`, F1: `0.6273`, accuracy: `0.6669`.
+- Referable-DR AUROC: `0.7388`, AUPR: `0.5140`, F1: `0.5193`, accuracy: `0.6858`.
+- Details: `results/messidor2_linear_probe/`.
+
 ## Citation
 
 ReCalib-Eye builds on the official EyeCLIP release and uses `eyeclip_visual.pt` as a
